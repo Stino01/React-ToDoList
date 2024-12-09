@@ -1,24 +1,56 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import InjectionForm from "./components/InjectionForm";
+import ToDoList from "./components/ToDoList";
+import {data} from "./data/todos";
 
-function App() {
+function App(props) {
+  const [todos, setTodos] = useState(data);
+  const [newTodo, setNewTodo] = useState({
+    id: data.length + 1,
+    text: '',
+    date: new Date()
+  });
+
+  const handleChange = (event) => {
+    event.persist();
+
+    setNewTodo({
+      ...newTodo,
+      text: event.target.value
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    setTodos([...todos, newTodo]);
+
+    setNewTodo({
+      ...newTodo,
+      id: newTodo.id + 1,
+      text: '',
+    });
+  };
+
+  const handleRemove = (todo) => {
+    const newTodos = todos.filter(item => item.id !== todo.id);
+    setTodos(newTodos);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="page">
+        <div className="card">
+            <div className="card-header">
+              <InjectionForm data="newToDo" handleChange={handleChange} handleSubmit={handleSubmit}/>
+            </div>
+            <div className="card-body">
+              <ToDoList data={todos} handleRemove={handleRemove}></ToDoList>
+            </div>
+        </div>
+      </div>
+    </>
   );
 }
 
